@@ -1,4 +1,4 @@
-{% macro get_metadata(metadata_list, granularity_list) %}
+{% macro get_metadata(metadata_list, granularity_list, undefined) %}
 
     {% set models_list = [] %}
 
@@ -13,6 +13,10 @@
             {% for item in model.meta[metadata] %}
                 {{ values_list.append(item) }}
             {% endfor %}
+
+            {% if values_list == [] %}
+                {% set values_list = [undefined] %}
+            {% endif %}
 
             {{ granularity_values_list.append(values_list) }}
 
@@ -33,7 +37,8 @@
             {% for metadata in metadata_list %}
 
                 {% if not model.meta[metadata] or not model.meta %}
-                    {{ model_row.append('Undefined') }}
+                    {{ model_row.append(undefined) }}
+
                 {% else %}
 
                     {% if metadata not in granularity_list %}

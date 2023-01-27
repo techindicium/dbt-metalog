@@ -1,8 +1,8 @@
-{% macro create_metadata_table(metadata_list=[], granularity_list=[]) %}
+{% macro create_metadata_table(metadata_list=[], granularity_list=[], undefined='Undefined') %}
 
     {% if execute %}
 
-        {% set models_list = metalog.get_metadata(metadata_list, granularity_list) %}
+        {% set models_list = metalog.get_metadata(metadata_list, granularity_list, undefined) %}
 
         {% for model in models_list %}
 
