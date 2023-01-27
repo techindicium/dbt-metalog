@@ -1,0 +1,16 @@
+name: 'metalog_integration_tests'
+version: '1.0'
+config-version: 2
+
+profile: 'metalog_integration_tests'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+target-path: "target"  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+    - "target"
+    - "dbt_packages"
