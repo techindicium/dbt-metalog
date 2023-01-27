@@ -1,23 +1,20 @@
 {{ config(
     meta={
-        'system': 'salesforce'
-        , 'table': 'fact_store_opening_status'
-        , 'area': 'sales'
-        , 'category': 'fact'
-        , 'main_subject': 'sales'
-        , 'secondary_subject': 'store openings'
-        , 'granularity': 'Each row represents ...'
-        , 'business_questions': [
-            'How many stores of type ...?'
-            , 'How many stores in ...?'
-        ]
+        'system': 'system_3'
+        , 'table': 'table_3'
+        , 'area': 'area_3'
+        , 'category': 'fact_3'
+        , 'main_subject': 'main_subject_3'
+        , 'secondary_subject': 'secondary_subject_3'
+        , 'granularity': 'granularity_3'
         , 'business_rules' : [
-            'Stores of type A receive code B ...'
-            , 'Consider only stores open after ...'
+            'biz_rule_3_1'
+            , 'biz_rule_3_2'
+            , 'biz_rule_3_3'
         ]
         , 'joins': [
-            'dim_dates: fact_store_opening_status.date = dim_dates.date'
-            , 'dim_stores: fact_store_opening_status.store_sk = dim_stores.store_sk'
+            'join_3_1'
+            , 'join_3_2'
         ]
     }
 )}}
