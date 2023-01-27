@@ -1,4 +1,4 @@
-{% macro create_metadata_model(metadata_list=[], granularity_list=[], undefined='Undefined') %}
+{% macro create_metadata_model(metadata_list, granularity_list=[], undefined='Undefined') %}
 
     {% if execute %}
 
