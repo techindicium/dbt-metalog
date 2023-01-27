@@ -42,10 +42,10 @@
                 {% else %}
 
                     {% if metadata not in granularity_list %}
-                            {{ model_row.append(model.meta[metadata]) }}
+                            {{ model_row.append(model.meta[metadata] | string) }}
                     {% else %}
                         {% set idx = granularity_list.index(metadata) %}
-                        {{ model_row.append(all_combinations[c][idx]) }}
+                        {{ model_row.append(all_combinations[c][idx] | string) }}
                     {% endif %}
 
                 {% endif %}
