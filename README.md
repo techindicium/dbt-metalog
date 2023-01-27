@@ -14,6 +14,15 @@ packages:
 
 2. Run `dbt deps` to install the package.
 
+### Requirements
+* dbt version >= 1.0.0
+
+### Supported adapters
+* ```dbt-bigquery```
+* ```dbt-databricks```
+* ```dbt-redshift```
+* ```dbt-snowflake```
+
 # Macros
 ## create_metadata_model ([source](macros/create_metadata_model.sql))
 
