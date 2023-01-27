@@ -1,4 +1,4 @@
-{{ metalog.create_metadata_table(
+{{ metalog.create_metadata_model(
         metadata_list = [
             "system"
             , "table"
