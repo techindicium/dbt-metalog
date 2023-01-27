@@ -13,11 +13,16 @@
 {% endmacro %}
 
 
+{% macro databricks__array_offset(arr, position) %}
+    {{arr}}[{{position}}]
+{% endmacro %}
+
+
 {% macro redshift__array_offset(arr, position) %}
-    {{ fields|join(' || ') }}
+    {{arr}}[{{position}}]
 {% endmacro %}
 
 
 {% macro snowflake__array_offset(arr, position) %}
-    {{ fields|join(' || ') }}
+    get({{position}}, {{arr}})
 {% endmacro %}
