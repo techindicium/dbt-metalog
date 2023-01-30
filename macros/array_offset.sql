@@ -26,3 +26,8 @@
 {% macro snowflake__array_offset(arr, position) %}
     get({{position}}, {{arr}})
 {% endmacro %}
+
+
+{% macro postgres__array_offset(arr, position) %}
+    {{arr}}[{{position}}]
+{% endmacro %}
