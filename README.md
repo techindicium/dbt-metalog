@@ -29,6 +29,7 @@ packages:
 ### Supported adapters
 * ```dbt-bigquery```
 * ```dbt-databricks```
+* ```dbt-postgres```
 * ```dbt-redshift```
 * ```dbt-snowflake```
 
