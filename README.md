@@ -19,7 +19,7 @@ New to dbt packages? Read more about them [here](https://docs.getdbt.com/docs/bu
 1. Include this package in your `packages.yml` file.
 ```yaml
 packages:
-  - git: "https://github.com/techindicium/metalog.git"
+  - git: "https://github.com/techindicium/dbt-metalog.git"
 ```
 
 2. Run `dbt deps` to install the package.
