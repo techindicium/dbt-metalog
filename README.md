@@ -6,6 +6,7 @@ Easily create models for
 * **Questions the model can answer**
 * **Tech responsibles**
 * **Requesting areas/persons**
+* **Date the model was created**
 * **ToDo's**
 * **Any metadata you want**
 
