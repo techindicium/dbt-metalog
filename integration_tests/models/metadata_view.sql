@@ -1,13 +1,17 @@
 {{ metalog.create_metadata_model(
-        metadata_list = [
+        metadata = [
             "system"
             , "table"
             , "business_questions"
             , "joins"
         ]
-        , granularity_list = [
+        , granularity = [
             "business_questions"
             , "joins"
         ]
+        , resource_type = [
+            'model'
+        ]
         , undefined='Undefined'
+        , show_resource_type=True
 ) }}
