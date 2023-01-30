@@ -25,14 +25,18 @@ packages:
 2. Run `dbt deps` to install the package.
 
 ### Requirements
-* dbt version >= 1.0.0
+* ```dbt version >= 1.0.0```
 
 ### Supported adapters
-* ```dbt-bigquery```
-* ```dbt-databricks```
-* ```dbt-postgres```
-* ```dbt-redshift```
-* ```dbt-snowflake```
+:white_check_mark: ```dbt-bigquery```
+
+:white_check_mark: ```dbt-databricks```
+
+:white_check_mark: ```dbt-postgres```
+
+:white_check_mark: ```dbt-redshift```
+
+:white_check_mark: ```dbt-snowflake```
 
 # Macros
 ## create_metadata_model ([source](macros/create_metadata_model.sql))
@@ -48,7 +52,10 @@ You can define the ```meta```config in
 * A config property, in a ```.yml file```
 * The ```dbt_project.yml``` under configs under models.
 
-**WARNING: Currently this package does not supports dicts in the meta config, just single values or lists.**
+
+> **Warning**: **Currently this package does not supports dicts in the meta config, just single values or lists.**
+
+
 
 #### Define the metadata in your models
 So, for example take a look at the [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/dummy_model_1.sql) inside the ```integration_tests``` folder
