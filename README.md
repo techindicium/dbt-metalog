@@ -1,11 +1,20 @@
-# dbt-metalog
+# dbt-metalog: Your metadata's catalog
 Create customizable models from your metadata.
+
+Easily create models for
+* **Business rules**
+* **Questions the model can answer**
+* **Tech responsibles**
+* **Requesting areas/persons**
+* **ToDo's**
+* **Any metadata you want**
 
 # Contents
 * [create_metadata_model](#create_metadata_model-source)
 
 # Installation instructions
 New to dbt packages? Read more about them [here](https://docs.getdbt.com/docs/building-a-dbt-project/package-management/).
+
 1. Include this package in your `packages.yml` file.
 ```yaml
 packages:
@@ -163,4 +172,3 @@ Output:
 * ```metadata_list``` (required): The metadata which will be the columns of your model.
 * ```granularity_list``` (optional): Metadata which must be separated in different rows. They must be wrote in the meta config as lists.
 * ```undefined``` (optional): Overrides the default string showed when the metadata is not found for that model.
-
