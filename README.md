@@ -130,6 +130,8 @@ Use the ```create_metadata_model``` macro passing as argument a list of the meta
 )}}
 ```
 
+> **Note**: **The default materialization for dbt models is view. If you want to change to table, change the [```materialized``` configuration property ](https://docs.getdbt.com/docs/build/materializations).**
+
 ### Run your model
 Just run it!
 ```shell
@@ -147,8 +149,6 @@ The output view, using the meta defined in our nodes will be:
 |dummy_model_2|model        |people      |Bob  |['How many employees ...?']                                |Undefined                                                                     |Undefined                |
 |metadata_view|model |Undefined    |Undefined   |Undefined|Undefined                                                  |Undefined                                                                     |                         |
 
-
-> **Note**: **The default materialization for dbt models is view. If you want to change to table, change the [```materialized``` configuration property ](https://docs.getdbt.com/docs/build/materializations).**
 
 # Additional customization
 
