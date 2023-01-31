@@ -4,12 +4,12 @@
     , resource_type=['model']
     , undefined='Undefined'
     , show_resource_type=True
-    )
-%}
+    , path=[]
+) %}
 
     {% if execute %}
 
-        {% set nodes_list = metalog.get_metadata(metadata, granularity, resource_type, undefined) %}
+        {% set nodes_list = metalog.get_metadata(metadata, granularity, resource_type, undefined, path) %}
 
         {% if nodes_list | length == 0 %}
 
@@ -48,14 +48,23 @@
     , granularity_list
     , resource_type_list
     , undefined
-    )
-%}
+    , path_list
+) %}
 
     {% set nodes_list = [] %}
 
-    {% for node in graph.nodes.values() %}
+    {% for node in graph.nodes.values() if node.resource_type in resource_type_list %}
 
-        {% if node.resource_type in resource_type_list %}
+        {% if path_list %}
+            {% set is_path = [] %}
+            {% for item in path_list if item in node.original_file_path %}
+                {{ is_path.append(1) }}
+            {% endfor %}
+        {% else %}
+            {% set is_path = True %}
+        {% endif %}
+
+        {% if is_path %}
 
             {% set granularity_values_list = [] %}
 
