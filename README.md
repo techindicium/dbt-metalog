@@ -96,25 +96,19 @@ So, for example take a look at the [dummy_model_1](https://github.com/techindici
 ```sql
 {{ config(
     meta={
-        'system': 'salesforce'
-        , 'table': 'fact_store_opening_status'
-        , 'area': 'sales'
-        , 'category': 'fact'
-        , 'main_subject': 'sales'
-        , 'secondary_subject': 'store openings'
-        , 'granularity': 'Each row represents ...'
+        'main_subject': 'sales'
+        , 'owner': 'Alice'
         , 'business_questions': [
             'How many stores of type ...?'
             , 'How many stores in ...?'
         ]
-        , 'business_rules' : [
+        , 'business_rules': [
             'Stores of type A receive code B ...'
             , 'Consider only stores open after ...'
         ]
-        , 'joins': [
-            'dim_dates: fact_store_opening_status.date = dim_dates.date'
-            , 'dim_stores: fact_store_opening_status.store_sk = dim_stores.store_sk'
-        ]
+        , 'todos': [
+            'change to incremental'
+            ]
     }
 )}}
 
@@ -127,12 +121,13 @@ Use the ```create_metadata_model``` macro passing as argument a list of the meta
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
-            "system"
-            , "table"
+            "main_subject"
+            , "owner"
             , "business_questions"
-            , "joins"
+            , "business_rules"
+            , "todos"
         ]
-) }}
+)}}
 ```
 
 ### Run your model
@@ -141,107 +136,265 @@ Just run it!
 dbt run -s metadata_view
 ```
 
-> **Note** Suppose we have the following nodes in our project: [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_1.sql), [dummy_model_2](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_2.sql), [dummy_model_3](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_3.sql) and [dummy_seed](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/seeds/dummy_seed.csv)
+> **Note** Suppose we have the following nodes in our project: [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_1.sql), [dummy_model_2](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_2.sql) and [dummy_seed](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/seeds/dummy_seed.csv)
 
 
 The output view, using the meta defined in our nodes will be:
 
-|node_name    |resource_type|system    |table                    |business_questions          |joins                                                                                                                                 |
-|-------------|-------------|----------|-------------------------|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-|dummy_model_1|model        |salesforce|fact_store_opening_status|['How many stores of type ...?', 'How many stores in ...?']|['dim_dates: fact_store_opening_status.date = dim_dates.date', 'dim_stores: fact_store_opening_status.store_sk = dim_stores.store_sk']|
-|dummy_model_2|model        |system_2  |table_2                  |['question 2_1', 'question 2_2', 'question 2_3']|Undefined                                                                                                                             |
-|dummy_model_3|model        |system_3  |table_3                  |Undefined                   |['join_3_1', 'join_3_2']                                                                                                              |
-|metadata_view|model        |Undefined |Undefined                |Undefined                   |Undefined                                                                                                                             |
+|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
+|-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|-------------------------|
+|dummy_model_1|model        |sales       |Alice|['How many stores of type ...?', 'How many stores in ...?']|['Stores of type A receive code B ...', 'Consider only stores open after ...']|['change to incremental']|
+|dummy_model_2|model        |people      |Bob  |['How many employees ...?']                                |Undefined                                                                     |Undefined                |
+|metadata_view|model |Undefined    |Undefined   |Undefined|Undefined                                                  |Undefined                                                                     |                         |
+
 
 > **Note**: **The default materialization for dbt models is view. If you want to change to table, change the [```materialized``` configuration property ](https://docs.getdbt.com/docs/build/materializations).**
 
+# Additional customization
 
+## granularity
 
 **If you want to break a metadata into different rows, you can use the ```granularity_list``` argument. For example, if you want to break the ```business_questions``` meta into different lines, change your model to:**
 
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
-            "system"
-            , "table"
+           "main_subject"
+            , "owner"
             , "business_questions"
-            , "joins"
+            , "business_rules"
+            , "todos"
         ]
         , granularity = [
             "business_questions"
         ]
-) }}
+)}}
 ```
 
-When you run it, the output will be:
-|node_name    |resource_type|system    |table                    |business_questions          |joins                                                                                                                                 |
-|-------------|-------------|----------|-------------------------|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-|dummy_model_1|model        |salesforce|fact_store_opening_status|How many stores of type ...?|['dim_dates: fact_store_opening_status.date = dim_dates.date', 'dim_stores: fact_store_opening_status.store_sk = dim_stores.store_sk']|
-|dummy_model_1|model        |salesforce|fact_store_opening_status|How many stores in ...?     |['dim_dates: fact_store_opening_status.date = dim_dates.date', 'dim_stores: fact_store_opening_status.store_sk = dim_stores.store_sk']|
-|dummy_model_2|model        |system_2  |table_2                  |question 2_1                |Undefined                                                                                                                             |
-|dummy_model_2|model        |system_2  |table_2                  |question 2_2                |Undefined                                                                                                                             |
-|dummy_model_2|model        |system_2  |table_2                  |question 2_3                |Undefined                                                                                                                             |
-|dummy_model_3|model        |system_3  |table_3                  |Undefined                   |['join_3_1', 'join_3_2']                                                                                                              |
-|metadata_view|model        |Undefined |Undefined                |Undefined                   |Undefined                                                                                                                             |
+Now you have only a business question per row.
 
-You can pass more than one metadata into the ```granularity_list```, for example:
+|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
+|-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|-------------------------|
+|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |['Stores of type A receive code B ...', 'Consider only stores open after ...']|['change to incremental']|
+|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |['Stores of type A receive code B ...', 'Consider only stores open after ...']|['change to incremental']|
+|dummy_model_2|model        |people      |Bob  |How many employees ...?                                    |Undefined                                                                     |Undefined                |
+|metadata_view|model |Undefined    |Undefined   |Undefined|Undefined                                                  |Undefined                                                                     |                         |
+
+
+You can pass more than one metadata to the ```granularity_list```, for example:
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
-            "system"
-            , "table"
+           "main_subject"
+            , "owner"
             , "business_questions"
-            , "joins"
+            , "business_rules"
+            , "todos"
         ]
         , granularity = [
             "business_questions"
-            , "joins"
+            , "business_rules"
+            , "todos"
         ]
-) }}
+)}}
 ```
 
-Output:
-|node_name    |resource_type|system    |table                    |business_questions          |joins                                                                                                                                 |
-|-------------|-------------|----------|-------------------------|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-|dummy_model_1|model        |salesforce|fact_store_opening_status|How many stores of type ...?|dim_dates: fact_store_opening_status.date = dim_dates.date                                                                            |
-|dummy_model_1|model        |salesforce|fact_store_opening_status|How many stores of type ...?|dim_stores: fact_store_opening_status.store_sk = dim_stores.store_sk                                                                  |
-|dummy_model_1|model        |salesforce|fact_store_opening_status|How many stores in ...?     |dim_dates: fact_store_opening_status.date = dim_dates.date                                                                            |
-|dummy_model_1|model        |salesforce|fact_store_opening_status|How many stores in ...?     |dim_stores: fact_store_opening_status.store_sk = dim_stores.store_sk                                                                  |
-|dummy_model_2|model        |system_2  |table_2                  |question 2_1                |Undefined                                                                                                                             |
-|dummy_model_2|model        |system_2  |table_2                  |question 2_2                |Undefined                                                                                                                             |
-|dummy_model_2|model        |system_2  |table_2                  |question 2_3                |Undefined                                                                                                                             |
-|dummy_model_3|model        |system_3  |table_3                  |Undefined                   |join_3_1                                                                                                                              |
-|dummy_model_3|model        |system_3  |table_3                  |Undefined                   |join_3_2                                                                                                                              |
-|metadata_view|model        |Undefined |Undefined                |Undefined                   |Undefined                                                                                                                             |
+Now each row have a unique business question, business rule and a todo.
+
+|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
+|-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|-------------------------|
+|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Stores of type A receive code B ...                                           |change to incremental    |
+|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Consider only stores open after ...                                           |change to incremental    |
+|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Stores of type A receive code B ...                                           |change to incremental    |
+|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Consider only stores open after ...                                           |change to incremental    |
+|dummy_model_2|model        |people      |Bob  |How many employees ...?                                    |Undefined                                                                     |Undefined                |
+|metadata_view|model |Undefined    |Undefined   |Undefined|Undefined                                                  |Undefined                                                                     |                         |
 
 
-You can hide the ```resource_type``` column passing the parameter ```show_resource_type=False```
+## resource_type
+You can ask the macro to include metadata of more resource types with the ```resource_type```argument. Let's include ```seeds``` along with models.
+
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
-            "system"
-            , "table"
+           "main_subject"
+            , "owner"
             , "business_questions"
-            , "joins"
+            , "business_rules"
+            , "todos"
         ]
         , granularity = [
             "business_questions"
-            , "joins"
+            , "business_rules"
+            , "todos"
         ]
-        , show_resource_type=False
-) }}
+        , resource_type = [
+                "model"
+                , "seed"
+        ]
+)}}
 ```
 
-Output:
-|node_name    |system|table     |business_questions       |joins                       |
-|-------------|------|----------|-------------------------|----------------------------|
-|dummy_model_1|salesforce|fact_store_opening_status|How many stores of type ...?|dim_dates: fact_store_opening_status.date = dim_dates.date|
-|dummy_model_1|salesforce|fact_store_opening_status|How many stores of type ...?|dim_stores: fact_store_opening_status.store_sk = dim_stores.store_sk|
-|dummy_model_1|salesforce|fact_store_opening_status|How many stores in ...?  |dim_dates: fact_store_opening_status.date = dim_dates.date|
-|dummy_model_1|salesforce|fact_store_opening_status|How many stores in ...?  |dim_stores: fact_store_opening_status.store_sk = dim_stores.store_sk|
-|dummy_model_2|system_2|table_2   |question 2_1             |Undefined                   |
-|dummy_model_2|system_2|table_2   |question 2_2             |Undefined                   |
-|dummy_model_2|system_2|table_2   |question 2_3             |Undefined                   |
-|dummy_model_3|system_3|table_3   |Undefined                |join_3_1                    |
-|dummy_model_3|system_3|table_3   |Undefined                |join_3_2                    |
-|metadata_view|Undefined|Undefined |Undefined                |Undefined                   |
+Now you can see also the metadata from the ```dummy_seed```.
+|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
+|-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|-------------------------|
+|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Stores of type A receive code B ...                                           |change to incremental    |
+|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Consider only stores open after ...                                           |change to incremental    |
+|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Stores of type A receive code B ...                                           |change to incremental    |
+|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Consider only stores open after ...                                           |change to incremental    |
+|dummy_model_2|model        |people      |Bob  |How many employees ...?                                    |Undefined                                                                     |Undefined                |
+|dummy_seed   |seed         |sales       |Carl |Undefined                                                  |Undefined                                                                     |Undefined                |
+|metadata_view|model |Undefined    |Undefined   |Undefined|Undefined                                                  |Undefined                                                                     |                         |
+
+## show_resource_type
+
+You can hide the ```resource_type``` column passing the argument ```show_resource_type=False```
+```sql
+{{ metalog.create_metadata_model(
+        metadata = [
+           "main_subject"
+            , "owner"
+            , "business_questions"
+            , "business_rules"
+            , "todos"
+        ]
+        , granularity = [
+            "business_questions"
+            , "business_rules"
+            , "todos"
+        ]
+        , resource_type = [
+                "model"
+                , "seed"
+        ]
+        , show_resource_type = False
+)}}
+```
+
+The ```resource_type``` column was removed
+
+|node_name    |main_subject|owner |business_questions|business_rules                                             |todos                                                                         |
+|-------------|------------|------|------------------|-----------------------------------------------------------|------------------------------------------------------------------------------|
+|dummy_model_1|sales       |Alice |How many stores of type ...?|Stores of type A receive code B ...                        |change to incremental                                                         |
+|dummy_model_1|sales       |Alice |How many stores of type ...?|Consider only stores open after ...                        |change to incremental                                                         |
+|dummy_model_1|sales       |Alice |How many stores in ...?|Stores of type A receive code B ...                        |change to incremental                                                         |
+|dummy_model_1|sales       |Alice |How many stores in ...?|Consider only stores open after ...                        |change to incremental                                                         |
+|dummy_model_2|people      |Bob   |How many employees ...?|Undefined                                                  |Undefined                                                                     |
+|dummy_seed   |sales       |Carl  |Undefined         |Undefined                                                  |Undefined                                                                     |
+|metadata_view|Undefined    |Undefined   |Undefined|Undefined                                                  |Undefined                                                                     |                         |
+
+## undefined
+You can override the default 'Undefined' string with ```undefined```.
+
+```sql
+{{ metalog.create_metadata_model(
+        metadata = [
+           "main_subject"
+            , "owner"
+            , "business_questions"
+            , "business_rules"
+            , "todos"
+        ]
+        , granularity = [
+            "business_questions"
+            , "business_rules"
+            , "todos"
+        ]
+        , resource_type = [
+                "model"
+                , "seed"
+        ]
+        , show_resource_type = True
+        , undefined = "Not defined"
+)}}
+```
+
+The undefined metadata are displayed as 'Not defined'.
+|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                |
+|-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|---------------------|
+|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Stores of type A receive code B ...                                           |change to incremental|
+|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Consider only stores open after ...                                           |change to incremental|
+|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Stores of type A receive code B ...                                           |change to incremental|
+|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Consider only stores open after ...                                           |change to incremental|
+|dummy_model_2|model        |people      |Bob  |How many employees ...?                                    |Not defined                                                                   |Not defined          |
+|dummy_seed   |seed         |sales       |Carl |Not defined                                                |Not defined                                                                   |Not defined          |
+|metadata_view|model |Not defined    |Not defined   |Not defined|Not defined                                                  |Not defined                                                                     |                         |
+
+## undefined_as_null
+You can also set the undefined metadata to appear as null values with ```undefined_as_null````
+```sql
+{{ metalog.create_metadata_model(
+        metadata = [
+           "main_subject"
+            , "owner"
+            , "business_questions"
+            , "business_rules"
+            , "todos"
+        ]
+        , granularity = [
+            "business_questions"
+            , "business_rules"
+            , "todos"
+        ]
+        , resource_type = [
+                "model"
+                , "seed"
+        ]
+        , show_resource_type = True
+        , undefined = "Not defined"
+        , undefined_as_null = True
+)}}
+```
+
+The undefined metadata are displayed as null.
+
+|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                |
+|-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|---------------------|
+|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Stores of type A receive code B ...                                           |change to incremental|
+|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Consider only stores open after ...                                           |change to incremental|
+|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Stores of type A receive code B ...                                           |change to incremental|
+|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Consider only stores open after ...                                           |change to incremental|
+|dummy_model_2|model        |people      |Bob  |How many employees ...?                                    |                                                                              |                     |
+|dummy_seed   |seed         |sales       |Carl |                                                           |                                                                              |                     |
+|metadata_view|model |    |   ||                                                  |                                                                     |                         |
+
+## path
+You can select the nodes which you can include the metadata by their paths with the ```path```argument, such as
+```sql
+{{ metalog.create_metadata_model(
+{{ metalog.create_metadata_model(
+        metadata = [
+           "main_subject"
+            , "owner"
+            , "business_questions"
+            , "business_rules"
+            , "todos"
+        ]
+        , granularity = [
+            "business_questions"
+            , "business_rules"
+            , "todos"
+        ]
+        , resource_type = [
+                "model"
+                , "seed"
+        ]
+        , show_resource_type = True
+        , undefined = "Not defined"
+        , undefined_as_null = True
+        , path = [
+            "models/dummy_models/"
+            , "seeds/"
+        ]
+)}}
+```
+Now the metadata_view was removed because it is not in the provided paths.
+
+|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                |
+|-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|---------------------|
+|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Stores of type A receive code B ...                                           |change to incremental|
+|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Consider only stores open after ...                                           |change to incremental|
+|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Stores of type A receive code B ...                                           |change to incremental|
+|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Consider only stores open after ...                                           |change to incremental|
+|dummy_model_2|model        |people      |Bob  |How many employees ...?                                    |                                                                              |                     |
+|dummy_seed   |seed         |sales       |Carl |                                                           |                                                                              |                     |
