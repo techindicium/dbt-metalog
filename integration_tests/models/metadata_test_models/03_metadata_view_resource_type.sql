@@ -11,5 +11,6 @@
         ]
         , resource_type = [
                 "model"
+                , "seed"
         ]
 )}}
