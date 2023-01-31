@@ -8,7 +8,8 @@
         ]
         , granularity = [
             "business_questions"
-            , "joins"
+            , "business_rules"
+            , "todos"
         ]
         , resource_type = [
                 "model"

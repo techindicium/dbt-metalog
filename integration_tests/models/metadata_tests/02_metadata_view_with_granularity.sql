@@ -8,6 +8,7 @@
         ]
         , granularity = [
             "business_questions"
-            , "joins"
+            , "business_rules"
+            , "todos"
         ]
 )}}
