@@ -3,6 +3,7 @@
     , granularity=[]
     , resource_type=['model']
     , undefined='Undefined'
+    , undefined_as_null=False
     , show_resource_type=True
     , path=[]
 ) %}
@@ -29,7 +30,11 @@
 
 
             {% for i in range(metadata | length) %}
-                , {{ metalog.array_offset(node, i+2) }} as {{metadata[i]}}
+                {% if undefined_as_null and node[i+2] == undefined %}
+                    , null as {{metadata[i]}}
+                {% else %}
+                    , {{ metalog.array_offset(node, i+2) }} as {{metadata[i]}}
+                {% endif %}
             {% endfor %}
 
             {% if not loop.last %}

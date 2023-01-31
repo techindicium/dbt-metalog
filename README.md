@@ -63,8 +63,8 @@ For others resource types, [check the docs](https://docs.getdbt.com/reference/re
 
 ### Arguments
   - ```metadata``` (required): A ```list``` of the metadata which will be the columns of your model.
-  - ```granularity``` (optional) (default = ```[]```) : A ```list``` of th metadata which must be separated in different rows. They must be wrote in the meta config as lists.
-  - ```resource_type``` (optional) (default = ```['model']```) : A ```list``` of the resource types you want to read the metadata from. Options:
+  - ```granularity``` (optional) (default = ```[]```): A ```list``` of th metadata which must be separated in different rows. They must be wrote in the meta config as lists.
+  - ```resource_type``` (optional) (default = ```['model']```): A ```list``` of the resource types you want to read the metadata from. Options:
     - model
     - source
     - seed
@@ -72,8 +72,10 @@ For others resource types, [check the docs](https://docs.getdbt.com/reference/re
     - tests
     - analysis
     - macros
-  - ```undefined``` (optional) (default = ```'Undefined'```) : A ```string``` which overrides the default string shown when the metadata is not found for that model.
-  - ```show_resource_type```(optional) (default = ```True```) : A ```boolean``` to show or hide the ```resource_type``` column in your resulting model.
+  - ```undefined``` (optional) (default = ```'Undefined'```): A ```string``` which overrides the default string shown when the metadata is not found for that model.
+  - ```undefined_as_null``` (optional) (default = ```'False'```): A ```booelan```, when True undefined metadata will be displayed as null.
+  - ```show_resource_type```(optional) (default = ```True```): A ```boolean``` to show or hide the ```resource_type``` column in your resulting model.
+  - ```path```(optional) (default = []): A ```list``` of folder paths. The macro will only look for resources into these folders.
 
 ## Usage
 

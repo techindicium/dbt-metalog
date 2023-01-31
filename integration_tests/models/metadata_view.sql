@@ -13,4 +13,5 @@
                 "model"
         ]
         , show_resource_type = False
+        , undefined_as_null = True
 )}}
