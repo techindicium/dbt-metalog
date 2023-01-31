@@ -77,9 +77,15 @@
 
                 {% set values_list = [] %}
 
-                {% for item in node.meta[metadata] %}
-                    {{ values_list.append(item) }}
-                {% endfor %}
+                {% if node.meta[metadata] is string %}
+                    {{ values_list.append(node.meta[metadata]) }}
+                {% else %}
+
+                    {% for item in node.meta[metadata] %}
+                        {{ values_list.append(item) }}
+                    {% endfor %}
+
+                {% endif %}
 
                 {% if values_list == [] %}
                     {% set values_list = [undefined] %}
