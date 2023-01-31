@@ -10,9 +10,7 @@
             'Stores of type A receive code B ...'
             , 'Consider only stores open after ...'
         ]
-        , 'todos': [
-            'change to incremental'
-            ]
+        , 'todos': 'change to incremental'
     }
 )}}
 
