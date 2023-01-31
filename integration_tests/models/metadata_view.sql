@@ -10,8 +10,7 @@
             , "joins"
         ]
         , resource_type = [
-            'model'
+                "model"
         ]
-        , undefined='Undefined'
-        , show_resource_type=True
-) }}
+        , show_resource_type = False
+)}}
