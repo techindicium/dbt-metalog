@@ -1,9 +1,10 @@
 {{ metalog.create_metadata_model(
         metadata = [
-            "system"
-            , "table"
+           "main_subject"
+            , "owner"
             , "business_questions"
-            , "joins"
+            , "business_rules"
+            , "todos"
         ]
         , granularity = [
             "business_questions"
@@ -16,4 +17,8 @@
         , show_resource_type = True
         , undefined = "Not defined"
         , undefined_as_null = True
+        , path = [
+            "models/dummy_models/"
+            , "seeds/"
+        ]
 )}}

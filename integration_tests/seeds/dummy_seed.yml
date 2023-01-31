@@ -2,9 +2,9 @@ version: 2
 
 seeds:
   - name: 'dummy_seed'
-    description: "table with country data."
+    description: "stores"
     config:
       meta: {
-            'system': 'dummy_seed_system'
-            , 'granularity': 'dummy_seed_granularity'
+            'main_subject': 'sales'
+            , 'owner': 'Carl'
         }
