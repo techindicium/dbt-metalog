@@ -1,16 +1,19 @@
 {{ metalog.create_metadata_model(
         metadata = [
-            "system"
-            , "table"
+           "main_subject"
+            , "owner"
             , "business_questions"
-            , "joins"
+            , "business_rules"
+            , "todos"
         ]
         , granularity = [
             "business_questions"
-            , "joins"
+            , "business_rules"
+            , "todos"
         ]
         , resource_type = [
                 "model"
+                , "seed"
         ]
         , show_resource_type = False
 )}}
