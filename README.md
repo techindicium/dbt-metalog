@@ -3,8 +3,8 @@ Create customizable models from your metadata.
 
 Easily create models for
 * **Business rules**
-* **Questions the model can answer**
-* **Tech responsibles**
+* **Business questions**
+* **Tech owners**
 * **Requesting areas/persons**
 * **Date the model was created**
 * **ToDo's**
@@ -72,7 +72,7 @@ For others resource types, [check the docs](https://docs.getdbt.com/reference/re
     - tests
     - analysis
     - macros
-  - ```undefined``` (optional) (default = ```'Undefined'```) : A ```string``` which overrides the default string showed when the metadata is not found for that model.
+  - ```undefined``` (optional) (default = ```'Undefined'```) : A ```string``` which overrides the default string shown when the metadata is not found for that model.
   - ```show_resource_type```(optional) (default = ```True```) : A ```boolean``` to show or hide the ```resource_type``` column in your resulting model.
 
 ## Usage
