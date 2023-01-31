@@ -2,9 +2,9 @@
     metadata
     , granularity=[]
     , resource_type=['model']
+    , show_resource_type=True
     , undefined='Undefined'
     , undefined_as_null=False
-    , show_resource_type=True
     , path=[]
 ) %}
 
