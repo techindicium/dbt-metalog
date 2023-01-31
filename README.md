@@ -1,7 +1,7 @@
 # dbt-metalog: Your metadata's catalog
 Create customizable models from your metadata.
 
-Easily create models for
+Easily create models for:
 * **Business rules**
 * **Business questions**
 * **Tech owners**
@@ -10,10 +10,28 @@ Easily create models for
 * **ToDo's**
 * **Any metadata you want**
 
+Choose your metadata by:
+* **name**
+* **resource type**
+* **path**
+
 # Contents
 * [create_metadata_model](#create_metadata_model-source)
 
-# Installation instructions
+# Requirements
+dbt version
+* ```dbt version >= 1.0.0```
+
+Supported adapters
+
+:white_check_mark: ```dbt-bigquery```
+:white_check_mark: ```dbt-databricks```
+:white_check_mark: ```dbt-postgres```
+:white_check_mark: ```dbt-redshift```
+:white_check_mark: ```dbt-snowflake```
+
+# Package installation
+
 New to dbt packages? Read more about them [here](https://docs.getdbt.com/docs/building-a-dbt-project/package-management/).
 
 1. Include this package in your `packages.yml` file.
@@ -24,15 +42,7 @@ packages:
 
 2. Run `dbt deps` to install the package.
 
-## Requirements
-* ```dbt version >= 1.0.0```
 
-### Supported adapters
-:white_check_mark: ```dbt-bigquery```
-:white_check_mark: ```dbt-databricks```
-:white_check_mark: ```dbt-postgres```
-:white_check_mark: ```dbt-redshift```
-:white_check_mark: ```dbt-snowflake```
 
 # Macros
 ## create_metadata_model ([source](macros/create_metadata_model.sql))
@@ -61,7 +71,8 @@ For others resource types, [check the docs](https://docs.getdbt.com/reference/re
 
 > **Warning**: **Currently this package does not supports dicts in the meta config, just single values or lists.**
 
-### Arguments
+
+## Arguments
   - ```metadata``` (required): A ```list``` of the metadata which will be the columns of your model.
   - ```granularity``` (optional) (default = ```[]```): A ```list``` of th metadata which must be separated in different rows. They must be wrote in the meta config as lists.
   - ```resource_type``` (optional) (default = ```['model']```): A ```list``` of the resource types you want to read the metadata from. Options:
@@ -80,7 +91,8 @@ For others resource types, [check the docs](https://docs.getdbt.com/reference/re
 ## Usage
 
 ### Define the metadata in your nodes
-So, for example take a look at the [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/dummy_model_1.sql) inside the ```integration_tests``` folder
+So, for example take a look at the [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_1.sql) inside the ```integration_tests``` folder
+
 ```sql
 {{ config(
     meta={
@@ -111,7 +123,7 @@ select 1 as dummy
 
 ### Create a model which uses the ```create_metadata_model``` macro.
 
-Use the ```create_metadata_model``` macro passing as argument a list of the metadata you want to include in your model. Using the [metadata_view](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/metadata_view.sql) as example:
+Use the ```create_metadata_model``` macro passing as argument a list of the metadata you want to include in your model. Let's create a model named ```metadata_view``` (you can choose any name) as example:
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
@@ -129,7 +141,10 @@ Just run it!
 dbt run -s metadata_view
 ```
 
-The output view, using the meta defined in [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/dummy_model_1.sql), [dummy_model_2](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/dummy_model_2.sql) and [dummy_model_3](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/dummy_model_3.sql) will be:
+> **Note** Suppose we have the following nodes in our project: [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_1.sql), [dummy_model_2](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_2.sql), [dummy_model_3](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_3.sql) and [dummy_seed](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/seeds/dummy_seed.csv)
+
+
+The output view, using the meta defined in our nodes will be:
 
 |node_name    |resource_type|system    |table                    |business_questions          |joins                                                                                                                                 |
 |-------------|-------------|----------|-------------------------|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
@@ -138,7 +153,7 @@ The output view, using the meta defined in [dummy_model_1](https://github.com/te
 |dummy_model_3|model        |system_3  |table_3                  |Undefined                   |['join_3_1', 'join_3_2']                                                                                                              |
 |metadata_view|model        |Undefined |Undefined                |Undefined                   |Undefined                                                                                                                             |
 
-> **Warning**: **The default materialization for dbt models is view. If you want to change to table, change the [```materialized``` configuration property ](https://docs.getdbt.com/docs/build/materializations).**
+> **Note**: **The default materialization for dbt models is view. If you want to change to table, change the [```materialized``` configuration property ](https://docs.getdbt.com/docs/build/materializations).**
 
 
 
