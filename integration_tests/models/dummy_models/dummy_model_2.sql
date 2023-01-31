@@ -2,9 +2,7 @@
     meta={
         'main_subject': 'people'
         , 'owner': 'Bob'
-        , 'business_questions': [
-            'How many employees ...?'
-        ]
+        , 'business_questions': 'How many employees ...?'
     }
 )}}
 
