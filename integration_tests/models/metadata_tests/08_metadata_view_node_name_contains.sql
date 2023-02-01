@@ -18,7 +18,7 @@
         , show_resource_type = True
         , undefined = "Not defined"
         , undefined_as_null = True
-        , node_name_contains = [
+        , resource_name_contains = [
             '1'
             , 'seed'
         ]
