@@ -5,12 +5,13 @@
     , show_resource_type=True
     , undefined='Undefined'
     , undefined_as_null=False
-    , path=[]
+    , resource_path=[]
+    , resource_name_contains=[]
 ) %}
 
     {% if execute %}
 
-        {% set nodes_list = metalog.get_metadata(metadata, granularity, resource_type, undefined, path) %}
+        {% set nodes_list = metalog.get_metadata(metadata, granularity, resource_type, undefined, resource_path, resource_name_contains) %}
 
         {% if nodes_list | length == 0 %}
 
@@ -22,7 +23,7 @@
 
             select
 
-                {{ metalog.array_offset(node, 0) }} as node_name
+                {{ metalog.array_offset(node, 0) }} as resource_name
 
             {% if show_resource_type %}
                 , {{ metalog.array_offset(node, 1) }} as resource_type
@@ -53,23 +54,35 @@
     , granularity_list
     , resource_type_list
     , undefined
-    , path_list
+    , resource_path_list
+    , resource_name_contains_list
 ) %}
 
     {% set nodes_list = [] %}
 
     {% for node in graph.nodes.values() if node.resource_type in resource_type_list %}
 
-        {% if path_list %}
-            {% set is_path = [] %}
-            {% for item in path_list if item in node.original_file_path %}
-                {{ is_path.append(1) }}
+        {# 'Check if node is in the provided resource_paths' #}
+        {% if resource_path_list %}
+            {% set is_resource_path = [] %}
+            {% for item in resource_path_list if item in node.original_file_path %}
+                {{ is_resource_path.append(1) }}
             {% endfor %}
         {% else %}
-            {% set is_path = True %}
+            {% set is_resource_path = True %}
         {% endif %}
 
-        {% if is_path %}
+        {# 'Check if node name contains at least one of the provided strings' #}
+        {% if resource_name_contains_list %}
+            {% set is_name = [] %}
+            {% for item in resource_name_contains_list if item in node.unique_id.split('.')[2] %}
+                {{ is_name.append(1) }}
+            {% endfor %}
+        {% else %}
+            {% set is_name = True %}
+        {% endif %}
+
+        {% if is_resource_path and is_name %}
 
             {% set granularity_values_list = [] %}
 
@@ -77,16 +90,22 @@
 
                 {% set values_list = [] %}
 
+                {# 'If the provided metadata in granularity is a string' #}
+                {# 'just append the string into values_list' #}
                 {% if node.meta[metadata] is string %}
                     {{ values_list.append(node.meta[metadata]) }}
-                {% else %}
 
+                {# 'If the provided metadata in granularity is a list' #}
+                {# 'then append each value into values_list' #}
+                {% else %}
                     {% for item in node.meta[metadata] %}
                         {{ values_list.append(item) }}
                     {% endfor %}
 
                 {% endif %}
 
+                {# 'If the model has no metadata from the granularity list' #}
+                {# 'append the undefined argument string' #}
                 {% if values_list == [] %}
                     {% set values_list = [undefined] %}
                 {% endif %}
@@ -97,6 +116,8 @@
 
             {% set all_combinations = metalog.combinations(granularity_values_list) %}
 
+            {# 'The if block below is used to get a length of 1 for all_combinations
+            if there is none combination' #}
             {% if all_combinations == [] %}
                 {% set all_combinations = [[]] %}
             {% endif %}
