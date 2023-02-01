@@ -11,9 +11,10 @@ Easily create models for:
 * **Any metadata you want**
 
 Choose your metadata by:
-* **name**
+* **metadata name**
 * **resource type**
-* **path**
+* **resource path**
+* **resource name**
 
 # Contents
 * [create_metadata_model](#create_metadata_model-source)
@@ -86,7 +87,8 @@ For others resource types, [check the docs](https://docs.getdbt.com/reference/re
   - ```undefined``` (optional) (default = ```'Undefined'```): A ```string``` which overrides the default string shown when the metadata is not found for that model.
   - ```undefined_as_null``` (optional) (default = ```'False'```): A ```booelan```, when True undefined metadata will be displayed as null.
   - ```show_resource_type```(optional) (default = ```True```): A ```boolean``` to show or hide the ```resource_type``` column in your resulting model.
-  - ```path```(optional) (default = []): A ```list``` of folder paths. The macro will only look for resources into these folders.
+  - ```resource_path```(optional) (default = []): A ```list``` of folder paths. The macro will only look for resources in these folders.
+  - ```resource_name_contains```(optional) (default = []): A ```list``` strings. The macro will only look for resources which contains at least one of the provided strings in their names.
 
 ## Usage
 
@@ -143,7 +145,7 @@ dbt run -s metadata_view
 
 The output view, using the meta defined in our nodes will be:
 
-|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
+|resource_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
 |-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|-------------------------|
 |dummy_model_1|model        |sales       |Alice|['How many stores of type ...?', 'How many stores in ...?']|['Stores of type A receive code B ...', 'Consider only stores open after ...']|['change to incremental']|
 |dummy_model_2|model        |people      |Bob  |['How many employees ...?']                                |Undefined                                                                     |Undefined                |
@@ -173,7 +175,7 @@ The output view, using the meta defined in our nodes will be:
 
 Now you have only a business question per row.
 
-|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
+|resource_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
 |-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|-------------------------|
 |dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |['Stores of type A receive code B ...', 'Consider only stores open after ...']|['change to incremental']|
 |dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |['Stores of type A receive code B ...', 'Consider only stores open after ...']|['change to incremental']|
@@ -201,7 +203,7 @@ You can pass more than one metadata to the ```granularity_list```, for example:
 
 Now each row have a unique business question, business rule and a todo.
 
-|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
+|resource_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
 |-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|-------------------------|
 |dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Stores of type A receive code B ...                                           |change to incremental    |
 |dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Consider only stores open after ...                                           |change to incremental    |
@@ -236,7 +238,7 @@ You can ask the macro to include metadata of more resource types with the ```res
 ```
 
 Now you can see also the metadata from the ```dummy_seed```.
-|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
+|resource_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                    |
 |-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|-------------------------|
 |dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Stores of type A receive code B ...                                           |change to incremental    |
 |dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Consider only stores open after ...                                           |change to incremental    |
@@ -273,7 +275,7 @@ You can hide the ```resource_type``` column passing the argument ```show_resourc
 
 The ```resource_type``` column was removed
 
-|node_name    |main_subject|owner |business_questions|business_rules                                             |todos                                                                         |
+|resource_name    |main_subject|owner |business_questions|business_rules                                             |todos                                                                         |
 |-------------|------------|------|------------------|-----------------------------------------------------------|------------------------------------------------------------------------------|
 |dummy_model_1|sales       |Alice |How many stores of type ...?|Stores of type A receive code B ...                        |change to incremental                                                         |
 |dummy_model_1|sales       |Alice |How many stores of type ...?|Consider only stores open after ...                        |change to incremental                                                         |
@@ -310,7 +312,7 @@ You can override the default 'Undefined' string with ```undefined```.
 ```
 
 The undefined metadata are displayed as 'Not defined'.
-|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                |
+|resource_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                |
 |-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|---------------------|
 |dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Stores of type A receive code B ...                                           |change to incremental|
 |dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Consider only stores open after ...                                           |change to incremental|
@@ -348,7 +350,7 @@ You can also set the undefined metadata to appear as null values with ```undefin
 
 The undefined metadata are displayed as null.
 
-|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                |
+|resource_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                |
 |-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|---------------------|
 |dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Stores of type A receive code B ...                                           |change to incremental|
 |dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Consider only stores open after ...                                           |change to incremental|
@@ -358,10 +360,9 @@ The undefined metadata are displayed as null.
 |dummy_seed   |seed         |sales       |Carl |                                                           |                                                                              |                     |
 |metadata_view|model |    |   ||                                                  |                                                                     |                         |
 
-## path
-You can select the nodes which you can include the metadata by their paths with the ```path```argument, such as
+## resource_path
+You can select the resources which you can include the metadata by their paths with the ```resource_path```argument, such as
 ```sql
-{{ metalog.create_metadata_model(
 {{ metalog.create_metadata_model(
         metadata = [
            "main_subject"
@@ -382,22 +383,60 @@ You can select the nodes which you can include the metadata by their paths with 
         , show_resource_type = True
         , undefined = "Not defined"
         , undefined_as_null = True
-        , path = [
+        , resource_path = [
             "models/dummy_models/"
             , "seeds/"
         ]
 )}}
 ```
 Now the metadata_view was removed because it is not in the provided paths.
+| node_name     | resource_type | main_subject | owner | business_questions           | business_rules                      | todos                 |
+|---------------|---------------|--------------|-------|------------------------------|-------------------------------------|-----------------------|
+| dummy_model_1 | model         | sales        | Alice | How many stores of type ...? | Stores of type A receive code B ... | change to incremental |
+| dummy_model_1 | model         | sales        | Alice | How many stores of type ...? | Consider only stores open after ... | change to incremental |
+| dummy_model_1 | model         | sales        | Alice | How many stores in ...?      | Stores of type A receive code B ... | change to incremental |
+| dummy_model_1 | model         | sales        | Alice | How many stores in ...?      | Consider only stores open after ... | change to incremental |
+| dummy_model_2 | model         | people       | Bob   | How many employees ...?      |                                     |                       |
+| dummy_seed    | seed          | sales        | Carl  |                              |                                     |                       |
 
-|node_name    |resource_type|main_subject|owner|business_questions                                         |business_rules                                                                |todos                |
-|-------------|-------------|------------|-----|-----------------------------------------------------------|------------------------------------------------------------------------------|---------------------|
-|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Stores of type A receive code B ...                                           |change to incremental|
-|dummy_model_1|model        |sales       |Alice|How many stores of type ...?                               |Consider only stores open after ...                                           |change to incremental|
-|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Stores of type A receive code B ...                                           |change to incremental|
-|dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Consider only stores open after ...                                           |change to incremental|
-|dummy_model_2|model        |people      |Bob  |How many employees ...?                                    |                                                                              |                     |
-|dummy_seed   |seed         |sales       |Carl |                                                           |                                                                              |                     |
+
+## resource_name_contains
+You can select the resources which contains in their names at least one of the strings provided in the ```resource_name_contains```argument, such as
+```sql
+{{ metalog.create_metadata_model(
+        metadata = [
+           "main_subject"
+            , "owner"
+            , "business_questions"
+            , "business_rules"
+            , "todos"
+        ]
+        , granularity = [
+            "business_questions"
+            , "business_rules"
+            , "todos"
+        ]
+        , resource_type = [
+                "model"
+                , "seed"
+        ]
+        , show_resource_type = True
+        , undefined = "Not defined"
+        , undefined_as_null = True
+        , resource_name_contains = [
+            '1'
+            , 'seed'
+        ]
+)}}
+```
+Now the metadata_view was removed because it is not in the provided paths.
+| resource_name | resource_type | main_subject | owner | business_questions           | business_rules                      | todos                 |
+|---------------|---------------|--------------|-------|------------------------------|-------------------------------------|-----------------------|
+| dummy_model_1 | model         | sales        | Alice | How many stores of type ...? | Stores of type A receive code B ... | change to incremental |
+| dummy_model_1 | model         | sales        | Alice | How many stores of type ...? | Consider only stores open after ... | change to incremental |
+| dummy_model_1 | model         | sales        | Alice | How many stores in ...?      | Stores of type A receive code B ... | change to incremental |
+| dummy_model_1 | model         | sales        | Alice | How many stores in ...?      | Consider only stores open after ... | change to incremental |
+| dummy_seed    | seed          | sales        | Carl  |                              |                                     |                       |
 
 # ToDos
 * Implement CI

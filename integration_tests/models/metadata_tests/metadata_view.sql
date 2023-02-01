@@ -18,7 +18,7 @@
         , show_resource_type = True
         , undefined = "Not defined"
         , undefined_as_null = True
-        , path = [
+        , resource_path = [
             "models/dummy_models/"
             , "seeds/"
         ]
