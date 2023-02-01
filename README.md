@@ -398,3 +398,7 @@ Now the metadata_view was removed because it is not in the provided paths.
 |dummy_model_1|model        |sales       |Alice|How many stores in ...?                                    |Consider only stores open after ...                                           |change to incremental|
 |dummy_model_2|model        |people      |Bob  |How many employees ...?                                    |                                                                              |                     |
 |dummy_seed   |seed         |sales       |Carl |                                                           |                                                                              |                     |
+
+# ToDos
+* Implement CI
+* Create PR template
