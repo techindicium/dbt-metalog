@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: 'dummy_model_1'
+    description: "description of dummy_model_1"
+
+    columns:
+      - name: "dummy"
+        description: "the description of the dummy column of dummy_model_1"

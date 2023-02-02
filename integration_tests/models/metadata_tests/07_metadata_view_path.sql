@@ -19,7 +19,11 @@
         , undefined = "Not defined"
         , undefined_as_null = True
         , resource_path = [
-            "models/dummy_models/"
+            "models/"
             , "seeds/"
+        ]
+        , exclude_resource_name_contains = [
+            'models/metadata_tests'
+            'models/description_tests'
         ]
 )}}
