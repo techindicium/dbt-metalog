@@ -19,7 +19,9 @@
         , undefined = "Not defined"
         , undefined_as_null = True
         , resource_name_contains = [
-            '1'
-            , 'seed'
+            'dummy'
+        ]
+        , exclude_resource_name_contains = [
+            'seed'
         ]
 )}}
