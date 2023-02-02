@@ -19,7 +19,7 @@
         , undefined = "Not defined"
         , undefined_as_null = True
         , resource_path = [
-            "models/dummy_models/"
+            "models/"
             , "seeds/"
         ]
 )}}

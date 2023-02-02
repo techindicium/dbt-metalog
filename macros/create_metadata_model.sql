@@ -7,11 +7,14 @@
     , undefined_as_null=False
     , resource_path=[]
     , resource_name_contains=[]
+    , exclude_resource_path=[]
+    , exclude_resource_name_contains=[]
+
 ) %}
 
     {% if execute %}
 
-        {% set nodes_list = metalog.get_metadata(metadata, granularity, resource_type, undefined, resource_path, resource_name_contains) %}
+        {% set nodes_list = metalog.get_metadata(metadata, granularity, resource_type, undefined, resource_path, resource_name_contains, exclude_resource_path, exclude_resource_name_contains) %}
 
         {% if nodes_list | length == 0 %}
 
@@ -56,6 +59,8 @@
     , undefined
     , resource_path_list
     , resource_name_contains_list
+    , exclude_resource_path_list
+    , exclude_resource_name_contains_list
 ) %}
 
     {% set nodes_list = [] %}
@@ -65,8 +70,14 @@
         {# 'Check if node is in the provided resource_paths' #}
         {% if resource_path_list %}
             {% set is_resource_path = [] %}
-            {% for item in resource_path_list if item in node.original_file_path %}
-                {{ is_resource_path.append(1) }}
+            {% for item in resource_path_list if node.original_file_path.startswith(item) %}
+                {% if exclude_resource_path_list %}
+                    {% for item_exclude in exclude_resource_path_list if not node.original_file_path.startswith(item_exclude) %}
+                        {{ is_resource_path.append(1) }}
+                    {% endfor %}
+                {% else %}
+                    {{ is_resource_path.append(1) }}
+                {% endif %}
             {% endfor %}
         {% else %}
             {% set is_resource_path = True %}
@@ -76,7 +87,13 @@
         {% if resource_name_contains_list %}
             {% set is_name = [] %}
             {% for item in resource_name_contains_list if item in node.unique_id.split('.')[2] %}
-                {{ is_name.append(1) }}
+                {% if exclude_resource_name_contains_list %}
+                    {% for item_exclude in exclude_resource_name_contains_list if not item_exclude in node.unique_id.split('.')[2] %}
+                        {{ is_name.append(1) }}
+                    {% endfor %}
+                {% else %}
+                    {{ is_name.append(1) }}
+                {% endif %}
             {% endfor %}
         {% else %}
             {% set is_name = True %}
