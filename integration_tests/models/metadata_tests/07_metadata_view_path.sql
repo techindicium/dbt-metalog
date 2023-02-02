@@ -22,4 +22,8 @@
             "models/"
             , "seeds/"
         ]
+        , exclude_resource_name_contains = [
+            'models/metadata_tests'
+            'models/description_tests'
+        ]
 )}}
