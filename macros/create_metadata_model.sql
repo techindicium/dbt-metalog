@@ -65,9 +65,9 @@
         {# 'Check if node is in the provided resource_path_contains' #}
         {% set contains_resource_path = [] %}
         {% if resource_path_contains_list %}
-            {% for item in resource_path_contains_list if node.original_file_path.startswith(item) %}
+            {% for item in resource_path_contains_list if item in node.original_file_path %}
                 {% if exclude_resource_path_contains_list %}
-                    {% for item_exclude in exclude_resource_path_contains_list if not node.original_file_path.startswith(item_exclude) %}
+                    {% for item_exclude in exclude_resource_path_contains_list if not item_exclude in node.original_file_path %}
                         {{ contains_resource_path.append(1) }}
                     {% endfor %}
                 {% else %}
