@@ -5,11 +5,12 @@
     , resource_name_contains=[]
     , exclude_resource_path=[]
     , exclude_resource_name_contains=[]
+    , include_sources_in_path=False
 ) %}
 
     {% if execute %}
 
-        {% set rows_list = metalog.get_rows(resource_type, resource_path, resource_name_contains, exclude_resource_path, exclude_resource_name_contains) %}
+        {% set rows_list = metalog.get_rows(resource_type, resource_path, resource_name_contains, exclude_resource_path, exclude_resource_name_contains, include_sources_in_path) %}
 
         {% if rows_list | length == 0 %}
 
@@ -48,6 +49,7 @@
     , resource_name_contains_list
     , exclude_resource_path_list
     , exclude_resource_name_contains_list
+    , include_sources_in_path
 ) %}
 
     {% set rows_list = [] %}
@@ -55,8 +57,8 @@
     {% for node in graph.nodes.values() if node.resource_type in resource_type_list %}
 
         {# 'Check if node is in the provided resource_paths' #}
+        {% set is_resource_path = [] %}
         {% if resource_path_list %}
-            {% set is_resource_path = [] %}
             {% for item in resource_path_list if node.original_file_path.startswith(item) %}
                 {% if exclude_resource_path_list %}
                     {% for item_exclude in exclude_resource_path_list if not node.original_file_path.startswith(item_exclude) %}
@@ -67,12 +69,12 @@
                 {% endif %}
             {% endfor %}
         {% else %}
-            {% set is_resource_path = True %}
+            {{ is_resource_path.append(1) }}
         {% endif %}
 
         {# 'Check if node name contains at least one of the provided strings' #}
+        {% set is_name = [] %}
         {% if resource_name_contains_list %}
-            {% set is_name = [] %}
             {% for item in resource_name_contains_list if item in node.unique_id.split('.')[2] %}
                 {% if exclude_resource_name_contains_list %}
                     {% for item_exclude in exclude_resource_name_contains_list if not item_exclude in node.unique_id.split('.')[2] %}
@@ -83,7 +85,12 @@
                 {% endif %}
             {% endfor %}
         {% else %}
-            {% set is_name = True %}
+            {{ is_name.append(1) }}
+        {% endif %}
+
+        {# 'If include_sources_in_path = True, it doesn`t have to comply with the name rule' #}
+        {% if include_sources_in_path and node.resource_type == 'source' %}
+            {{ is_name.append(1) }}
         {% endif %}
 
         {% if is_resource_path and is_name %}
