@@ -383,7 +383,7 @@ You can select the resources which you can include the metadata by their paths w
         , show_resource_type = True
         , undefined = "Not defined"
         , undefined_as_null = True
-        , resource_path = [
+        , contains_resource_path[
             "models/dummy_models/"
             , "seeds/"
         ]

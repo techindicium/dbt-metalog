@@ -18,11 +18,11 @@
         , show_resource_type = True
         , undefined = "Not defined"
         , undefined_as_null = True
-        , resource_path = [
+        , resource_path_contains = [
             "models/"
             , "seeds/"
         ]
-        , exclude_resource_name_contains = [
+        , exclude_resource_path_contains = [
             'models/metadata_tests'
             'models/description_tests'
         ]

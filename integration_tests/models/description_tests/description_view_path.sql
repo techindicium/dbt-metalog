@@ -4,11 +4,11 @@
                 , "seed"
         ]
         , show_resource_type = True
-        , resource_path = [
+        , resource_path_contains = [
             "models/"
             , "seeds/"
         ]
-        , exclude_resource_path = [
+        , exclude_resource_path_contains = [
             'models/metadata_tests'
             'models/description_tests'
         ]
