@@ -85,6 +85,43 @@
 
     {% endfor %}
 
+    {% for source in graph.sources.values() if 'source' in resource_type_list %}
+
+        {# 'Check if source is in the provided resource_path_contains' #}
+        {% set contains_resource_path = [] %}
+        {% if resource_path_contains_list %}
+            {% for item in resource_path_contains_list if item in source.original_file_path %}
+                {% if exclude_resource_path_contains_list %}
+                    {% for item_exclude in exclude_resource_path_contains_list if not item_exclude in source.original_file_path %}
+                        {{ contains_resource_path.append(1) }}
+                    {% endfor %}
+                {% else %}
+                    {{ contains_resource_path.append(1) }}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {{ contains_resource_path.append(1) }}
+        {% endif %}
+
+        {% if contains_resource_path %}
+
+            {% for column in source.columns.values() %}
+
+                {% set source_columns_list = [] %}
+                {{ source_columns_list.append(source.unique_id.split('.')[2]) }}
+                {{ source_columns_list.append(source.resource_type) }}
+                {{ source_columns_list.append(source.description) }}
+                {{ source_columns_list.append(column.name) }}
+                {{ source_columns_list.append(column.description) }}
+
+                {{ rows_list.append(source_columns_list) }}
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endfor %}
+
     {{ return(rows_list) }}
 
 {% endmacro %}
