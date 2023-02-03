@@ -14,6 +14,7 @@
         , resource_type = [
                 "model"
                 , "seed"
+                , "source"
         ]
         , show_resource_type = True
         , undefined = "Not defined"
@@ -21,6 +22,7 @@
         , resource_path_contains = [
             "models/"
             , "seeds/"
+            , "source.yml"
         ]
         , exclude_resource_path_contains = [
             'models/metadata_tests'

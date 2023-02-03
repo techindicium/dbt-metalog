@@ -6,4 +6,5 @@
     }
 )}}
 
-select 2 as dummy
+select *
+from {{ source('raw', 'dummy_raw') }}
