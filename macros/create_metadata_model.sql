@@ -10,26 +10,26 @@
 ) -%}
     {%- if execute -%}
 
-        {%- set nodes_list = metalog.get_metadata(metadata, granularity, resource_type, undefined, resource_path_contains, exclude_resource_path_contains) -%}
+        {%- set rows_list = metalog.get_metadata(metadata, granularity, resource_type, undefined, resource_path_contains, exclude_resource_path_contains) -%}
 
-        {%- if nodes_list | length == 0 -%}
+        {%- if rows_list | length == 0 -%}
             {{ exceptions.raise_compiler_error("No metadata found for the provided parameters\nPlease check the metadata and resource type provided") }}
         {%- endif -%}
 
-        {%- for node in nodes_list -%}
+        {%- for row in rows_list -%}
 
-            select {{ metalog.array_offset(node, 0) }} as resource_name
+            select '{{ row[0] }}' as resource_name
 
             {%- if show_resource_type -%}
-                , {{ metalog.array_offset(node, 1) }} as resource_type
+                , '{{ row[1] }}' as resource_type
             {%- endif -%}
 
             {%- for i in range(metadata | length) -%}
 
-                {%- if undefined_as_null and node[i+2] == undefined -%}
+                {%- if undefined_as_null and row[i+2] == undefined -%}
                     , null as {{metadata[i]}}
                 {%- else -%}
-                    , {{ metalog.array_offset(node, i+2) }} as {{metadata[i]}}
+                    , '{{ row[i+2] }}' as {{metadata[i]}}
                 {%- endif -%}
 
             {%- endfor -%}

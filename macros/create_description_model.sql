@@ -17,14 +17,14 @@
 
         {%- for row in rows_list -%}
 
-            select {{ metalog.array_offset(row, 0) }} as resource_name
+            select '{{ row[0] }}' as resource_name
 
             {%- if show_resource_type -%}
-                , {{ metalog.array_offset(row, 1) }} as resource_type
+                , '{{ row[1] }}' as resource_type
             {%- endif -%}
-                , {{ metalog.array_offset(row, 2) }} as resource_description
-                , {{ metalog.array_offset(row, 3) }} as column_name
-                , {{ metalog.array_offset(row, 4) }} as columns_description
+                , '{{ row[2] }}' as resource_description
+                , '{{ row[3] }}' as column_name
+                , '{{ row[4] }}' as columns_description
             {% if not loop.last %}
                 union all
             {% endif %}
