@@ -5,12 +5,12 @@
     , show_resource_type=True
     , undefined='Undefined'
     , undefined_as_null=False
-    , resource_path_contains=[]
-    , exclude_resource_path_contains=[]
+    , files=[]
+    , exclude_files=[]
 ) -%}
     {%- if execute -%}
 
-        {%- set rows_list = metalog.get_metadata(metadata, granularity, resource_type, undefined, resource_path_contains, exclude_resource_path_contains) -%}
+        {%- set rows_list = metalog.get_metadata(metadata, granularity, resource_type, undefined, files, exclude_files) -%}
 
         {%- if rows_list | length == 0 -%}
             {{ exceptions.raise_compiler_error("No metadata found for the provided parameters\nPlease check the metadata and resource type provided") }}
@@ -50,31 +50,33 @@
     , granularity_list
     , resource_type_list
     , undefined
-    , resource_path_contains_list
-    , exclude_resource_path_contains_list
+    , files_list
+    , exclude_files_list
 ) -%}
+
+    {% set re = modules.re %}
 
     {%- set rows_list = [] -%}
 
     {%- for node in graph.nodes.values() if node.resource_type in resource_type_list -%}
 
-        {# 'Check if node is in the provided resource_path_contains' #}
-        {%- set contains_resource_path = [] -%}
-        {%- if resource_path_contains_list -%}
-            {%- for item in resource_path_contains_list if item in node.original_file_path -%}
-                {%- if exclude_resource_path_contains_list -%}
-                    {%- for item_exclude in exclude_resource_path_contains_list if not item_exclude in node.original_file_path -%}
-                        {{ contains_resource_path.append(1) }}
+        {# 'Check if node is in the provided files' #}
+        {%- set valid_files = [] -%}
+         {%- if files_list -%}
+            {%- for file in files_list if re.match(file, node.original_file_path, re.IGNORECASE) -%}
+                {%- if exclude_files_list -%}
+                    {%- for file_exclude in exclude_files_list if not re.match(file_exclude, node.original_file_path, re.IGNORECASE) -%}
+                        {{ valid_files.append(1) }}
                     {%- endfor -%}
                 {%- else -%}
-                    {{ contains_resource_path.append(1) }}
+                    {{ valid_files.append(1) }}
                 {%- endif -%}
             {%- endfor -%}
         {%- else -%}
-            {{ contains_resource_path.append(1) }}
+            {{ valid_files.append(1) }}
         {%- endif -%}
 
-        {%- if contains_resource_path -%}
+        {%- if valid_files -%}
 
             {%- set granularity_values_list = [] -%}
 
@@ -150,23 +152,23 @@
 
     {%- for source in graph.sources.values() if source.resource_type in resource_type_list -%}
 
-        {# 'Check if source is in the provided resource_path_contains' #}
-        {%- set contains_resource_path = [] -%}
-        {%- if resource_path_contains_list -%}
-            {%- for item in resource_path_contains_list if item in source.original_file_path -%}
-                {%- if exclude_resource_path_contains_list -%}
-                    {%- for item_exclude in exclude_resource_path_contains_list if not item_exclude in source.original_file_path -%}
-                        {{ contains_resource_path.append(1) }}
+        {# 'Check if source is in the provided files' #}
+        {%- set valid_files = [] -%}
+        {%- if files_list -%}
+            {%- for file in files_list if re.match(file, source.original_file_path, re.IGNORECASE) -%}
+                {%- if exclude_files_list -%}
+                    {%- for file_exclude in exclude_files_list if not re.match(file_exclude, source.original_file_path, re.IGNORECASE) -%}
+                        {{ valid_files.append(1) }}
                     {%- endfor -%}
                 {%- else -%}
-                    {{ contains_resource_path.append(1) }}
+                    {{ valid_files.append(1) }}
                 {%- endif -%}
             {%- endfor -%}
         {%- else -%}
-            {{ contains_resource_path.append(1) }}
+            {{ valid_files.append(1) }}
         {%- endif -%}
 
-        {%- if contains_resource_path -%}
+        {%- if valid_files -%}
 
             {%- set granularity_values_list = [] -%}
 

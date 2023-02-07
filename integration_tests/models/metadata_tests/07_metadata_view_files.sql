@@ -19,12 +19,12 @@
         , show_resource_type = True
         , undefined = "Not defined"
         , undefined_as_null = True
-        , resource_path_contains = [
+        , files = [
             "models/"
             , "seeds/"
             , "source.yml"
         ]
-        , exclude_resource_path_contains = [
+        , exclude_files = [
             'models/metadata_tests'
             'models/description_tests'
         ]

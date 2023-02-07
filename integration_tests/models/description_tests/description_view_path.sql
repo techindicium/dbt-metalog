@@ -5,8 +5,10 @@
             , "source"
         ]
         , show_resource_type = True
-        , resource_path_contains = [
-            "dummy_model"
-            , "source.yml"
+        , files = [
+            '.*.sql'
+        ]
+        , exclude_files = [
+            'models/metadata.*'
         ]
 )}}
