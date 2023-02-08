@@ -20,12 +20,12 @@
         , undefined = "Not defined"
         , undefined_as_null = True
         , files = [
-            "models/"
-            , "seeds/"
-            , "source.yml"
+            "models/.*"
+            , "seeds/.*"
+            , ".*/source.yml"
         ]
         , exclude_files = [
-            'models/metadata_tests'
-            'models/description_tests'
+            'models/metadata_tests/.*'
+            'models/description_tests/.*'
         ]
 )}}
