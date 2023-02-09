@@ -117,8 +117,8 @@ For others resource types, [check the docs](https://docs.getdbt.com/reference/re
   - ```undefined``` (optional) (default = ```'Undefined'```): A ```string``` which overrides the default string shown when the metadata is not found for that model.
   - ```undefined_as_null``` (optional) (default = ```'False'```): A ```booelan```, when True undefined metadata will be displayed as null.
   - ```show_resource_type```(optional) (default = ```True```): A ```boolean``` to show or hide the ```resource_type``` column in your resulting model.
-  - ```files```(optional) (default = []): A ```list``` of regex specifying the files to include, e.g. If you want to to include all files in models, then ```files=['models/.*']```.
-  - ```exclude_files```(optional) (default = []): A ```list``` of regex specifying the files to exclude, e.g. If you want to to exclude all staging files, then ```files=['.*stg_.*']```.
+  - ```files```(optional) (default = []): A ```list``` of regex specifying the files to include, e.g. If you want to include all files in models, then ```files=['models/.*']```.
+  - ```exclude_files```(optional) (default = []): A ```list``` of regex specifying the files to exclude, e.g. If you want to exclude all staging files, then ```files=['.*stg_.*']```.
 
 ### Usage
 
@@ -469,8 +469,8 @@ Nodes can be:
     - analysis
     - macros
   - ```show_resource_type```(optional) (default = ```True```): A ```boolean``` to show or hide the ```resource_type``` column in your resulting model.
-  - ```files```(optional) (default = []): A ```list``` of regex specifying the files to include, e.g. If you want to to include all files in models, then ```files=['models/.*']```.
-  - ```exclude_files```(optional) (default = []): A ```list``` of regex specifying the files to exclude, e.g. If you want to to exclude all staging files, then ```files=['.*stg_.*']```.
+  - ```files```(optional) (default = []): A ```list``` of regex specifying the files to include, e.g. If you want to include all files in models, then ```files=['models/.*']```.
+  - ```exclude_files```(optional) (default = []): A ```list``` of regex specifying the files to exclude, e.g. If you want to exclude all staging files, then ```files=['.*stg_.*']```.
 
 ### Usage
 
