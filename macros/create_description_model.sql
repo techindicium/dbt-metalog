@@ -1,13 +1,13 @@
 {%- macro create_description_model(
-    resource_type=['model']
+    resource_type=["model"]
     , show_resource_type=True
-    , resource_path_contains=[]
-    , exclude_resource_path_contains=[]
+    , files=[]
+    , exclude_files=[]
 ) -%}
 
     {%- if execute -%}
 
-        {%- set rows_list = metalog.get_rows(resource_type, resource_path_contains, exclude_resource_path_contains) -%}
+        {%- set rows_list = metalog.get_rows(resource_type, files, exclude_files) -%}
 
         {%- if rows_list | length == 0 -%}
 
@@ -17,14 +17,14 @@
 
         {%- for row in rows_list -%}
 
-            select {{ metalog.array_offset(row, 0) }} as resource_name
+            select "{{ row[0] }}" as resource_name
 
             {%- if show_resource_type -%}
-                , {{ metalog.array_offset(row, 1) }} as resource_type
+                , "{{ row[1] }}" as resource_type
             {%- endif -%}
-                , {{ metalog.array_offset(row, 2) }} as resource_description
-                , {{ metalog.array_offset(row, 3) }} as column_name
-                , {{ metalog.array_offset(row, 4) }} as columns_description
+                , "{{ row[2] }}" as resource_description
+                , "{{ row[3] }}" as column_name
+                , "{{ row[4] }}" as columns_description
             {% if not loop.last %}
                 union all
             {% endif %}
@@ -38,36 +38,38 @@
 
 {%- macro get_rows(
     resource_type_list
-    , resource_path_contains_list
-    , exclude_resource_path_contains_list
+    , files_list
+    , exclude_files_list
 ) -%}
+
+    {% set re = modules.re %}
 
     {%- set rows_list = [] -%}
 
     {%- for node in graph.nodes.values() if node.resource_type in resource_type_list -%}
 
-        {# 'Check if node is in the provided resource_path_contains' #}
-        {%- set contains_resource_path = [] -%}
-        {%- if resource_path_contains_list -%}
-            {%- for item in resource_path_contains_list if item in node.original_file_path -%}
-                {%- if exclude_resource_path_contains_list -%}
-                    {%- for item_exclude in exclude_resource_path_contains_list if not item_exclude in node.original_file_path -%}
-                        {{ contains_resource_path.append(1) }}
+        {# "Check if node is in the provided files" #}
+        {%- set valid_files = [] -%}
+        {%- if files_list -%}
+            {%- for file in files_list if re.match(file, node.original_file_path, re.IGNORECASE) -%}
+                {%- if exclude_files_list -%}
+                    {%- for file_exclude in exclude_files_list if not re.match(file_exclude, node.original_file_path, re.IGNORECASE) -%}
+                        {{ valid_files.append(1) }}
                     {%- endfor -%}
                 {%- else -%}
-                    {{ contains_resource_path.append(1) }}
+                    {{ valid_files.append(1) }}
                 {%- endif -%}
             {%- endfor -%}
         {%- else -%}
-            {{ contains_resource_path.append(1) }}
+            {{ valid_files.append(1) }}
         {%- endif -%}
 
-        {%- if contains_resource_path -%}
+        {%- if valid_files -%}
 
             {%- for column in node.columns.values() -%}
 
                 {%- set node_columns_list = [] -%}
-                {{ node_columns_list.append(node.unique_id.split('.')[2]) }}
+                {{ node_columns_list.append(node.unique_id.split(".")[2]) }}
                 {{ node_columns_list.append(node.resource_type) }}
                 {{ node_columns_list.append(node.description) }}
                 {{ node_columns_list.append(column.name) }}
@@ -81,30 +83,30 @@
 
     {%- endfor -%}
 
-    {%- for source in graph.sources.values() if 'source' in resource_type_list -%}
+    {%- for source in graph.sources.values() if "source" in resource_type_list -%}
 
-        {# 'Check if source is in the provided resource_path_contains' #}
-        {%- set contains_resource_path = [] -%}
-        {%- if resource_path_contains_list -%}
-            {%- for item in resource_path_contains_list if item in source.original_file_path -%}
-                {%- if exclude_resource_path_contains_list -%}
-                    {%- for item_exclude in exclude_resource_path_contains_list if not item_exclude in source.original_file_path -%}
-                        {{ contains_resource_path.append(1) }}
+        {# "Check if source is in the provided files" #}
+        {%- set valid_files = [] -%}
+        {%- if files_list -%}
+            {%- for file in files_list if re.match(file, source.original_file_path, re.IGNORECASE) -%}
+                {%- if exclude_files_list -%}
+                    {%- for file_exclude in exclude_files_list if not re.match(file_exclude, source.original_file_path, re.IGNORECASE) -%}
+                        {{ valid_files.append(1) }}
                     {%- endfor -%}
                 {%- else -%}
-                    {{ contains_resource_path.append(1) }}
+                    {{ valid_files.append(1) }}
                 {%- endif -%}
             {%- endfor -%}
         {%- else -%}
-            {{ contains_resource_path.append(1) }}
+            {{ valid_files.append(1) }}
         {%- endif -%}
 
-        {%- if contains_resource_path -%}
+        {%- if valid_files -%}
 
             {%- for column in source.columns.values() -%}
 
                 {%- set source_columns_list = [] -%}
-                {{ source_columns_list.append(source.unique_id.split('.')[2]) }}
+                {{ source_columns_list.append(source.unique_id.split(".")[2]) }}
                 {{ source_columns_list.append(source.resource_type) }}
                 {{ source_columns_list.append(source.description) }}
                 {{ source_columns_list.append(column.name) }}

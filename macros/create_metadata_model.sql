@@ -1,35 +1,35 @@
 {%- macro create_metadata_model(
     metadata
     , granularity=[]
-    , resource_type=['model']
+    , resource_type=["model"]
     , show_resource_type=True
-    , undefined='Undefined'
+    , undefined="Undefined"
     , undefined_as_null=False
-    , resource_path_contains=[]
-    , exclude_resource_path_contains=[]
+    , files=[]
+    , exclude_files=[]
 ) -%}
     {%- if execute -%}
 
-        {%- set nodes_list = metalog.get_metadata(metadata, granularity, resource_type, undefined, resource_path_contains, exclude_resource_path_contains) -%}
+        {%- set rows_list = metalog.get_metadata(metadata, granularity, resource_type, undefined, files, exclude_files) -%}
 
-        {%- if nodes_list | length == 0 -%}
+        {%- if rows_list | length == 0 -%}
             {{ exceptions.raise_compiler_error("No metadata found for the provided parameters\nPlease check the metadata and resource type provided") }}
         {%- endif -%}
 
-        {%- for node in nodes_list -%}
+        {%- for row in rows_list -%}
 
-            select {{ metalog.array_offset(node, 0) }} as resource_name
+            select "{{ row[0] }}" as resource_name
 
             {%- if show_resource_type -%}
-                , {{ metalog.array_offset(node, 1) }} as resource_type
+                , "{{ row[1] }}" as resource_type
             {%- endif -%}
 
             {%- for i in range(metadata | length) -%}
 
-                {%- if undefined_as_null and node[i+2] == undefined -%}
+                {%- if undefined_as_null and row[i+2] == undefined -%}
                     , null as {{metadata[i]}}
                 {%- else -%}
-                    , {{ metalog.array_offset(node, i+2) }} as {{metadata[i]}}
+                    , "{{ row[i+2] }}" as {{metadata[i]}}
                 {%- endif -%}
 
             {%- endfor -%}
@@ -50,31 +50,33 @@
     , granularity_list
     , resource_type_list
     , undefined
-    , resource_path_contains_list
-    , exclude_resource_path_contains_list
+    , files_list
+    , exclude_files_list
 ) -%}
+
+    {% set re = modules.re %}
 
     {%- set rows_list = [] -%}
 
     {%- for node in graph.nodes.values() if node.resource_type in resource_type_list -%}
 
-        {# 'Check if node is in the provided resource_path_contains' #}
-        {%- set contains_resource_path = [] -%}
-        {%- if resource_path_contains_list -%}
-            {%- for item in resource_path_contains_list if item in node.original_file_path -%}
-                {%- if exclude_resource_path_contains_list -%}
-                    {%- for item_exclude in exclude_resource_path_contains_list if not item_exclude in node.original_file_path -%}
-                        {{ contains_resource_path.append(1) }}
+        {# "Check if node is in the provided files" #}
+        {%- set valid_files = [] -%}
+         {%- if files_list -%}
+            {%- for file in files_list if re.match(file, node.original_file_path, re.IGNORECASE) -%}
+                {%- if exclude_files_list -%}
+                    {%- for file_exclude in exclude_files_list if not re.match(file_exclude, node.original_file_path, re.IGNORECASE) -%}
+                        {{ valid_files.append(1) }}
                     {%- endfor -%}
                 {%- else -%}
-                    {{ contains_resource_path.append(1) }}
+                    {{ valid_files.append(1) }}
                 {%- endif -%}
             {%- endfor -%}
         {%- else -%}
-            {{ contains_resource_path.append(1) }}
+            {{ valid_files.append(1) }}
         {%- endif -%}
 
-        {%- if contains_resource_path -%}
+        {%- if valid_files -%}
 
             {%- set granularity_values_list = [] -%}
 
@@ -82,13 +84,13 @@
 
                 {%- set values_list = [] -%}
 
-                {# 'If the provided metadata in granularity is a string' #}
-                {# 'just append the string into values_list' #}
+                {# "If the provided metadata in granularity is a string" #}
+                {# "just append the string into values_list" #}
                 {%- if node.meta[metadata] is string -%}
                     {{ values_list.append(node.meta[metadata]) }}
 
-                {# 'If the provided metadata in granularity is a list' #}
-                {# 'then append each value into values_list' #}
+                {# "If the provided metadata in granularity is a list" #}
+                {# "then append each value into values_list" #}
                 {%- else -%}
                     {%- for item in node.meta[metadata] -%}
                         {{ values_list.append(item) }}
@@ -96,8 +98,8 @@
 
                 {%- endif -%}
 
-                {# 'If the model has no metadata from the granularity list' #}
-                {# 'append the undefined argument string' #}
+                {# "If the model has no metadata from the granularity list" #}
+                {# "append the undefined argument string" #}
                 {%- if values_list == [] -%}
                     {%- set values_list = [undefined] -%}
                 {%- endif -%}
@@ -108,8 +110,8 @@
 
             {%- set all_combinations = metalog.combinations(granularity_values_list) -%}
 
-            {# 'The if block below is used to get a length of 1 for all_combinations
-            if there is none combination' #}
+            {# "The if block below is used to get a length of 1 for all_combinations
+            if there is none combination" #}
             {%- if all_combinations == [] -%}
                 {%- set all_combinations = [[]] -%}
             {%- endif -%}
@@ -118,7 +120,7 @@
 
                 {%- set node_row = [] -%}
 
-                {%- set unique_id_splitted = node.unique_id.split('.') -%}
+                {%- set unique_id_splitted = node.unique_id.split(".") -%}
 
                 {{ node_row.append(unique_id_splitted[2]) }}
                 {{ node_row.append(node.resource_type) }}
@@ -150,23 +152,23 @@
 
     {%- for source in graph.sources.values() if source.resource_type in resource_type_list -%}
 
-        {# 'Check if source is in the provided resource_path_contains' #}
-        {%- set contains_resource_path = [] -%}
-        {%- if resource_path_contains_list -%}
-            {%- for item in resource_path_contains_list if item in source.original_file_path -%}
-                {%- if exclude_resource_path_contains_list -%}
-                    {%- for item_exclude in exclude_resource_path_contains_list if not item_exclude in source.original_file_path -%}
-                        {{ contains_resource_path.append(1) }}
+        {# "Check if source is in the provided files" #}
+        {%- set valid_files = [] -%}
+        {%- if files_list -%}
+            {%- for file in files_list if re.match(file, source.original_file_path, re.IGNORECASE) -%}
+                {%- if exclude_files_list -%}
+                    {%- for file_exclude in exclude_files_list if not re.match(file_exclude, source.original_file_path, re.IGNORECASE) -%}
+                        {{ valid_files.append(1) }}
                     {%- endfor -%}
                 {%- else -%}
-                    {{ contains_resource_path.append(1) }}
+                    {{ valid_files.append(1) }}
                 {%- endif -%}
             {%- endfor -%}
         {%- else -%}
-            {{ contains_resource_path.append(1) }}
+            {{ valid_files.append(1) }}
         {%- endif -%}
 
-        {%- if contains_resource_path -%}
+        {%- if valid_files -%}
 
             {%- set granularity_values_list = [] -%}
 
@@ -174,13 +176,13 @@
 
                 {%- set values_list = [] -%}
 
-                {# 'If the provided metadata in granularity is a string' #}
-                {# 'just append the string into values_list' #}
+                {# "If the provided metadata in granularity is a string" #}
+                {# "just append the string into values_list" #}
                 {%- if source.meta[metadata] is string -%}
                     {{ values_list.append(source.meta[metadata]) }}
 
-                {# 'If the provided metadata in granularity is a list' #}
-                {# 'then append each value into values_list' #}
+                {# "If the provided metadata in granularity is a list" #}
+                {# "then append each value into values_list" #}
                 {%- else -%}
                     {%- for item in source.meta[metadata] -%}
                         {{ values_list.append(item) }}
@@ -188,8 +190,8 @@
 
                 {%- endif -%}
 
-                {# 'If the model has no metadata from the granularity list' #}
-                {# 'append the undefined argument string' #}
+                {# "If the model has no metadata from the granularity list" #}
+                {# "append the undefined argument string" #}
                 {%- if values_list == [] -%}
                     {%- set values_list = [undefined] -%}
                 {%- endif -%}
@@ -200,8 +202,8 @@
 
             {%- set all_combinations = metalog.combinations(granularity_values_list) -%}
 
-            {# 'The if block below is used to get a length of 1 for all_combinations
-            if there is none combination' #}
+            {# "The if block below is used to get a length of 1 for all_combinations
+            if there is none combination" #}
             {%- if all_combinations == [] -%}
                 {%- set all_combinations = [[]] -%}
             {%- endif -%}
@@ -210,7 +212,7 @@
 
                 {%- set source_row = [] -%}
 
-                {%- set unique_id_splitted = source.unique_id.split('.') -%}
+                {%- set unique_id_splitted = source.unique_id.split(".") -%}
 
                 {{ source_row.append(unique_id_splitted[2]) }}
                 {{ source_row.append(source.resource_type) }}
