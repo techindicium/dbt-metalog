@@ -25,10 +25,18 @@ Create light customizable models from your metadata.
 
 :white_check_mark: file.
 
-# :gear: Macros
-* [{{ create_metadata_model( ) }}](#create_metadata_model-source): This macro generates SQL for creating **customizable tables or views from the [metadata](https://docs.getdbt.com/reference/resource-configs/meta) of your nodes and sources**. You have the **flexibility to select the specific metadata** you want to include in your table or view.
+# :mag_right: Content
+* :running: [Quickstart](#running-quickstart)
+* * [Requirements](#requirements)
+* * [Installation](#installation)
+* * [Package Limitations](#package-limitations)
+* :gear: [Macros](#gear-macros)
+* * [{{ create_metadata_model( ) }}](#create_metadata_model-source)
+* * [{{ create_description_model( ) }}](#create_description_model-source)
+* :wrench: [Troubleshooting](#wrench-troubleshooting)
+* :writing_hand: [ToDos](#writing_hand-todos)
 
-* [{{ create_description_model( ) }}](#create_description_model-source): This macro generates SQL for creating **tables or views from the description of your nodes and its columns**. You have the **flexibility to select the specific files** you want to include in your table or view.
+
 
 # :running: Quickstart
 
@@ -66,7 +74,7 @@ packages:
 
 
 
-# :mag_right: Macros (detailed)
+# :gear: Macros
 ## create_metadata_model ([source](macros/create_metadata_model.sql))
 
 This macro generates SQL for creating **customizable tables or views from the [metadata](https://docs.getdbt.com/reference/resource-configs/meta) of your nodes and sources**. You have the **flexibility to select the specific metadata** you want to include in your table or view. If a node **does not contain the specified metadata, it will be displayed as "Undefined"**, but you can alter this default text to your preference.
@@ -522,7 +530,22 @@ The output view, using the meta defined in our nodes will be:
 | dummy_model_2     | model             | description of dummy_model_2 | dummy           | the description of the dummy column of dummy_model_2 |
 
 
+# :wrench: Troubleshooting
+### Unclosed string literal
+```
+Database Error in model description_model (models/metadata_catalog/description_model.sql)
+Syntax error: Unclosed string literal at [2473:196]
+compiled Code at target/run/marketing_mas/models/metadata_catalog/description_model.sql
+```
+Check if there is a double quote in any of your descriptions. If so, remove it or replace by single quotes.
 
+### The query is too large
+```
+Database Error in model description models_ view (models/metadata catalog/description models_ view.sql)
+The query is too large. The maximum standard SQL query length is 1024.00K characters, including comments and white space characters.
+compiled Code at target/run/marketing_mas/models/metadata_catalog/description_models_view.sql
+```
+It is a current limitation of the package. As it passes the metadata/descriptions to the SQL query, if there is a massive number of metadata/descriptions there is a chance the query exceeds the limits of your DW.
 
 # :writing_hand: ToDos
 * Implement CI
