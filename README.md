@@ -357,7 +357,7 @@ The undefined metadata are displayed as 'Not defined'.
 
 
 ### undefined_as_null
-You can also set the undefined metadata to appear as null values with ```undefined_as_null````
+You can also set the undefined metadata to appear as null values with ```undefined_as_null```
 
 [06_metadata_test_undefined_as_null](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/metadata_tests/06_metadata_test_undefined_as_null.sql)
 ```sql
