@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "dummy raw source."
+    schema: raw
+    tables:
+      - name: dummy_raw
+        description: "dummy raw source table"
+        columns:
+          - name: source_column
+            description: "dummy source column."
+    meta: {
+            'main_subject': 'sales'
+            , 'owner': 'Carl'
+        }

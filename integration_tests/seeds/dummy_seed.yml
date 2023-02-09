@@ -1,0 +1,14 @@
+version: 2
+
+seeds:
+  - name: 'dummy_seed'
+    description: "stores"
+    config:
+      meta: {
+            'main_subject': 'sales'
+            , 'owner': 'Carl'
+        }
+
+    columns:
+      - name: "seed_column"
+        description: "the description of the dummy seed column of dummy_seed"
