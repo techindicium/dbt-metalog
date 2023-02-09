@@ -123,7 +123,7 @@ For others resource types, [check the docs](https://docs.getdbt.com/reference/re
 ### Usage
 
 #### Define the metadata in your nodes
-So, for example take a look at the [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_1.sql) inside the ```integration_tests``` folder
+So, for example take a look at the [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/dummy_models/dummy_model_1.sql) inside the ```integration_tests``` folder
 
 ```sql
 {{ config(
@@ -147,7 +147,7 @@ select 1 as dummy
 
 #### Create a model which uses the ```create_metadata_model``` macro.
 
-Use the ```create_metadata_model``` macro passing as argument a list of the metadata you want to include in your model. Let's see the [01_metadata_test](https://github.com/techindicium/dbt-metalog/main/integration_tests/models/metadata_tests/01_metadata_test.sql) model (You can create a model with any name you want) as an example:
+Use the ```create_metadata_model``` macro passing as argument a list of the metadata you want to include in your model. Let's see the [01_metadata_test](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/metadata_tests/01_metadata_test.sql) model (You can create a model with any name you want) as an example:
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
@@ -168,7 +168,7 @@ Just run it!
 dbt run -s metadata_view
 ```
 
-> **Note** Suppose we have the following nodes in our project: [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_1.sql), [dummy_model_2](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_2.sql) and [dummy_seed](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/seeds/dummy_seed.csv)
+> **Note** Suppose we have the following nodes in our project: [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/dummy_models/dummy_model_1.sql), [dummy_model_2](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/dummy_models/dummy_model_2.sql) and [dummy_seed](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/seeds/dummy_seed.csv)
 
 
 The output view, using the meta defined in our nodes will be:
@@ -213,7 +213,7 @@ Now you have only a business question per row.
 
 You can pass more than one metadata to the ```granularity_list```, for example:
 
-[02_metadata_test_with_granularity](https://github.com/techindicium/dbt-metalog/main/integration_tests/models/metadata_tests/02_metadata_test_with_granularity.sql)
+[02_metadata_test_with_granularity](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/metadata_tests/02_metadata_test_with_granularity.sql)
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
@@ -246,7 +246,7 @@ Now each row have a unique business question, business rule and a todo.
 ### resource_type
 You can ask the macro to include metadata of more resource types with the ```resource_type```argument. Let's include ```seeds``` along with models.
 
-[03_metadata_test_resource_type](https://github.com/techindicium/dbt-metalog/main/integration_tests/models/metadata_tests/03_metadata_test_resource_type.sql)
+[03_metadata_test_resource_type](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/metadata_tests/03_metadata_test_resource_type.sql)
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
@@ -283,7 +283,7 @@ Now you can see also the metadata from the ```dummy_seed```.
 
 You can hide the ```resource_type``` column passing the argument ```show_resource_type=False```
 
-[04_metadata_test_show_resource_type](https://github.com/techindicium/dbt-metalog/main/integration_tests/models/metadata_tests/04_metadata_test_show_resource_type.sql)
+[04_metadata_test_show_resource_type](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/metadata_tests/04_metadata_test_show_resource_type.sql)
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
@@ -321,7 +321,7 @@ The ```resource_type``` column was removed
 ### undefined
 You can override the default 'Undefined' string with ```undefined```.
 
-[05_metadata_test_undefined](https://github.com/techindicium/dbt-metalog/main/integration_tests/models/metadata_tests/05_metadata_test_undefined.sql)
+[05_metadata_test_undefined](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/metadata_tests/05_metadata_test_undefined.sql)
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
@@ -359,7 +359,7 @@ The undefined metadata are displayed as 'Not defined'.
 ### undefined_as_null
 You can also set the undefined metadata to appear as null values with ```undefined_as_null````
 
-[06_metadata_test_undefined_as_null](https://github.com/techindicium/dbt-metalog/main/integration_tests/models/metadata_tests/06_metadata_test_undefined_as_null.sql)
+[06_metadata_test_undefined_as_null](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/metadata_tests/06_metadata_test_undefined_as_null.sql)
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
@@ -399,7 +399,7 @@ The undefined metadata are displayed as null.
 ### files
 You can select the files you want to include (```files```) or to exclude (```exclude_files```)
 
-[07_metadata_test_files](https://github.com/techindicium/dbt-metalog/main/integration_tests/models/metadata_tests/07_metadata_test_files.sql)
+[07_metadata_test_files](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/metadata_tests/07_metadata_test_files.sql)
 ```sql
 {{ metalog.create_metadata_model(
         metadata = [
@@ -475,7 +475,7 @@ Nodes can be:
 ### Usage
 
 #### Define the description of your nodes
-So, for example take a look at the [dummy_model_2.yml](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_2.yml) inside the ```integration_tests``` folder
+So, for example take a look at the [dummy_model_2.yml](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/dummy_models/dummy_model_2.yml) inside the ```integration_tests``` folder
 
 ```yaml
 version: 2
@@ -493,7 +493,7 @@ models:
 
 Use the ```create_description_model``` macro passing the arguments of your choice
 
-[description_test_files](https://github.com/techindicium/dbt-metalog/main/integration_tests/models/description_tests/description_test_files.sql)
+[description_test_files](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/description_tests/description_test_files.sql)
 ```sql
 {{ metalog.create_description_model(
         resource_type = [
@@ -519,7 +519,7 @@ Just run it!
 dbt run -s metadata_view
 ```
 
-> **Note** Suppose we have the following nodes in our project: [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_1.sql), [dummy_model_2](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/models/dummy_models/dummy_model_2.sql) and [dummy_seed](https://github.com/techindicium/dbt-metalog/blob/feature/adding_tests/integration_tests/seeds/dummy_seed.csv)
+> **Note** Suppose we have the following nodes in our project: [dummy_model_1](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/dummy_models/dummy_model_1.sql), [dummy_model_2](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/models/dummy_models/dummy_model_2.sql) and [dummy_seed](https://github.com/techindicium/dbt-metalog/blob/main/integration_tests/seeds/dummy_seed.csv)
 
 
 The output view, using the meta defined in our nodes will be:
