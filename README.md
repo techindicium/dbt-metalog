@@ -1,5 +1,12 @@
 # :notebook: dbt-metalog: Your metadata's catalog
-Create light customizable models from your metadata.
+
+Have you ever found yourself jotting down essential business rules, questions, technical owners, or ToDos in a **separate Excel sheet  - far from your code -, only to forget about them later?**
+
+Do you **struggle to keep track of all the metadata** that's critical for effective data management and analysis?
+
+Worry no more! We have a solution - dbt-metalog.
+
+**Create light customizable models from your metadata.**
 
 **Easily create models for:**
 
