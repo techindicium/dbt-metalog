@@ -425,7 +425,6 @@ You can select the files you want to include (```files```) or to exclude (```exc
         ]
 )}}
 ```
-Now the metadata_view was removed because it is not in the provided paths.
 | **resource_name** | **resource_type** | **main_subject** | **owner** | **business_questions**       | **business_rules**                  | **todos**             |
 |-------------------|-------------------|------------------|-----------|------------------------------|-------------------------------------|-----------------------|
 | dummy_model_1     | model             | sales            | Alice     | How many stores of type ...? | Stores of type A receive code B ... | change to incremental |
