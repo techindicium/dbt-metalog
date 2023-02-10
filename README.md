@@ -53,18 +53,6 @@ New to dbt packages? Read more about them [here](https://docs.getdbt.com/docs/bu
 dbt version
 * ```dbt version >= 1.0.0```
 
-Supported adapters
-
-:white_check_mark: ```dbt-bigquery```
-
-:white_check_mark: ```dbt-databricks```
-
-:white_check_mark: ```dbt-postgres```
-
-:white_check_mark: ```dbt-redshift```
-
-:white_check_mark: ```dbt-snowflake```
-
 ## Installation
 
 1. Include this package in your `packages.yml` file.
