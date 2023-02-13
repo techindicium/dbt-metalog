@@ -58,7 +58,8 @@ dbt version
 1. Include this package in your `packages.yml` file.
 ```yaml
 packages:
-  - git: "https://github.com/techindicium/dbt-metalog.git"
+  - package: techindicium/dbt-metalog
+    version: 1.0.0
 ```
 
 2. Run `dbt deps` to install the package.
