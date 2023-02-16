@@ -6,7 +6,7 @@ Do you **struggle to keep track of all the metadata** that's critical for effect
 
 Worry no more! We have a solution - dbt-metalog.
 
-**Create light customizable models from your metadata.**
+**Create lightweight and totally customizable models from your metadata.**
 
 **Easily create models for:**
 
