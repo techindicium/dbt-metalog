@@ -58,7 +58,7 @@ dbt version
 1. Include this package in your `packages.yml` file.
 ```yaml
 packages:
-  - package: techindicium/dbt-metalog
+  - package: techindicium/metalog
     version: 1.0.0
 ```
 
